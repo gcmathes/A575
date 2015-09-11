@@ -1,0 +1,6 @@
+grep -v '#' linelist.20150714 | awk '{print NR}' | tail -1
+
+
+#Put this into the command line to get the number of entries. Produces:
+
+108032
