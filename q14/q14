@@ -1,0 +1,78 @@
+#!/bin/csh
+
+set flag = $1
+
+#First job is to make a script to grab a bunch of info. I mostly
+#just chose specs I thought were important, like the name of the 
+#processor, number of cores per processor, etc. I took this from the 
+#/proc/cpuinfo file. 
+
+set name = `hostname`
+set pro = `grep 'processor' /proc/cpuinfo | wc -l`
+set model = `grep 'model name' /proc/cpuinfo | awk -F: '{print $2}' | head -n 1`
+set MHz = `grep 'cpu MHz' /proc/cpuinfo | awk -F: '{print $2}' | head -n 1`
+set cache = `grep 'cache size' /proc/cpuinfo | awk -F: '{print $2}' | head -n 1`
+set mem = `grep 'MemTotal' /proc/meminfo | awk -F: '{print $2}'`
+set swap = `grep 'SwapTotal' /proc/meminfo | awk -F: '{print $2}'`
+set diskname = `df -h | grep 'dev' | grep -v 'tmpfs' | awk '{print $1}'`
+set disksize = `df -h | grep 'dev' | grep -v 'tmpfs' | awk '{print $2}'`
+#Usually we don't mix + match processors, so these should output the specs
+#of each processor, name, and number of them. I tried grabbing the memory from
+#top using a series of grep and awk, but that didn't work. Then I remembered 
+#meminfo existed! Much easier that way.
+
+#Now just need to format this into HTML and Latex tables. I plan on piping the
+#outputs of this shell to a file. Also, I'll be using another script to call this
+#function many times over. I just want this program to fill my tables, so I leave
+#out the headers and footers. So, with that in mind:
+
+if ($flag == "html") then
+    echo '<TR>'
+    echo '<TD> Name'
+    echo '<TD>' $name 
+    echo '<TR>'
+    echo '<TD> Processor Num'
+    echo '<TD>' $pro
+    echo '<TR>'
+    echo '<TD> Processor Name'
+    echo '<TD>' $model
+    echo '<TR>'
+    echo '<TD> Processor Speed (MHz)'
+    echo '<TD>' $MHz
+    echo '<TR>'
+    echo '<TD> Cache Size'
+    echo '<TD>' $cache
+    echo '<TR>'
+    echo '<TD> Total Memory'
+    echo '<TD>' $mem
+    echo '<TR>'
+    echo '<TD> Swapspace'
+    echo '<TD>' $swap
+    echo '<TR>'
+    echo '<TD>' $diskname
+    echo '<TD>' $disksize
+endif
+
+#I include a flag to tell my script which format to output to. An example
+#command would be './q14.sh html > q14.html' 
+
+if ($flag == "latex") then
+    echo 'Name & '$name' \\\\'
+    echo 'Processor Num & '$pro' \\\\'
+    echo 'Processor Name & '$model' \\\\'
+    echo 'Processor Speed (MHz) & '$MHz' \\\\'
+    echo 'Cache Size & '$cache' \\\\'
+    echo 'Total Memory & '$mem' \\\\'
+    echo 'Swapspace & '$swap' \\\\'
+    echo $diskname' & '$disksize' \\\\'
+endif
+
+#Both of the above format my PC Specs variables into neat tables. Finally,
+#to make sure my script won't break, if you give a command other than
+#html or latex, it just returns the line telling you to use one of those. 
+
+if ($flag != "latex" && $flag != "html") then
+    echo "Please use html or latex as an input command"
+endif
+
+#Unfortunately, I couldn't find a way to get the disk sizes to come out neatly.

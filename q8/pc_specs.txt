@@ -1,0 +1,6 @@
+Field,      Desktop,   Astronomy, Hyades,    Praesepe,   Virgo
+Memory,     7974780k,  16438132k, 32871516k, 13185944k+, 65802548k
+Swap Space, 12287966k, 0k,        65537160k, 26214064k+, 13107432k+
+Processors, 4,         8,         48,        48,         64
+Proc Speed, 800MHz,    2612MHz,   800MHz,    800MHz,     1400MHz
+Disk Space, 931.5G,    446G,      19T,       10.2T,      3.6T

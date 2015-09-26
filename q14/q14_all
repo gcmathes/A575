@@ -1,0 +1,48 @@
+#!/bin/csh
+
+#Start out by separating the latex and HTML versions of the code. Note that
+#the code can only create one of these types at a time, so you may need to 
+#run it twice to get both types; one with html, one with latex.
+if ($1 == "html") then
+    echo '<table border=2>'
+    foreach comp ( $* )
+        if ($comp == 'html') then #This line ignores the flag to be passed
+	    set dummy = 1        #to the q14 code as a hostname.
+	else
+	    ssh $comp q14 $1 #Running ssh with additional commands sends 
+	    echo '<TR>'      #those commands to the designated machine
+	    echo '<TD> -'    #and logs out after completing it.
+	    echo '<TD> -'
+	endif
+    end
+    echo '</table>'
+endif
+
+#In both of these, I added headers and footers to each document. This is so
+#the code can repeat and just fill in the middle. When it completes running for
+#each computer host, it finishes each respective footer. The latex formatting 
+#uses similar logic to above. 
+
+if ($1 == 'latex') then
+    echo '\\documentclass{article}'
+    echo '\\usepackage[top=1in, bottom=1.25in, left=0.75in, right=0.75in]{geometry}'
+    echo '\\begin{document}'
+    echo '\\begin{table}'
+    echo '\\caption{Various PC Specs for Department Computers}'
+    echo '\\begin{tabular}{l || c}'
+    foreach comp ( $* )
+        if ($comp == 'latex') then
+	    set dummy = 1
+	else
+            ssh $comp q14 $1
+	    echo '- & - \\\\'
+	endif
+    end
+    echo '\\end{tabular}'
+    echo '\\end{table}'
+    echo '\\end{document}'
+    pdflatex q14_all.tex
+endif
+
+#The latex version compiles itself after finishing. I've added my ssh key 
+#so that the ssh commands go through without needing any further input. 
