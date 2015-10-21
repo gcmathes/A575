@@ -1,0 +1,14 @@
+#include <stdio.h>
+
+int main()
+{
+  int total = 0, i = 1, max = 1000;
+  
+  while (i <= max)
+    {
+      total += i;
+      i += 1;
+    }
+  
+  printf("Total Sum from 1 to 1000: %d\n",total);
+}
